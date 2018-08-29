@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -22,10 +23,12 @@ func (c *Client) RequestReview(ctx context.Context, repoWithOwner string, number
 	}
 	return nil
 }
+
 func (c *Client) ListIssuesWithRequestedReview(ctx context.Context, repoWithOwner string, number int, revievers []string) ([]ghcli.Issue, error) {
-	ii, _, err := c.client.Search.Issues(ctx, "is:open+is:pr+review-requested:slomek", nil)
+	query := fmt.Sprintf("is:open+is:pr+review-requested:%s", c.myself)
+	ii, _, err := c.client.Search.Issues(ctx, query, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to request review on pull request")
+		return nil, errors.Wrap(err, "failed to get list of issues from search")
 	}
 
 	sort.Slice(ii.Issues, func(i, j int) bool {

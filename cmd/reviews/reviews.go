@@ -44,7 +44,12 @@ var request = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		ghcli := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		ghcli, err := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		if err != nil {
+			fmt.Printf("Failed to create GitHub client: %v\n", err)
+			return
+		}
+
 		err = ghcli.RequestReview(ctx, repoName, prNo, ppl)
 		if err != nil {
 			fmt.Printf("Failed to create PR: %v", err)
@@ -59,7 +64,12 @@ var list = &cobra.Command{
 	Long:  "Lists all reviews assigned to you",
 	Args:  cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		ghcli := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		ghcli, err := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		if err != nil {
+			fmt.Printf("Failed to create GitHub client: %v\n", err)
+			return
+		}
+
 		issues, err := ghcli.ListIssuesWithRequestedReview(context.Background(), "repoName", 0, []string{"ppl"})
 		if err != nil {
 			fmt.Printf("Failed to list my code review requests: %v", err)

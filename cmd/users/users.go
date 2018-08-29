@@ -28,7 +28,11 @@ var listFromOrganization = &cobra.Command{
 	Long:  "List users for organization",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		ghcli := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		ghcli, err := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		if err != nil {
+			fmt.Printf("Failed to create GitHub client: %v\n", err)
+			return
+		}
 		orgName := args[0]
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

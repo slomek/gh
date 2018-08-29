@@ -51,7 +51,12 @@ var create = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
-		ghcli := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		ghcli, err := github.NewClient(os.Getenv("GITHUB_PR_TOKEN"))
+		if err != nil {
+			fmt.Printf("Failed to create GitHub client: %v\n", err)
+			return
+		}
+
 		pr, err := ghcli.CreatePullRequest(ctx, repoName, message, branch)
 		if err != nil {
 			fmt.Printf("Failed to create PR: %v", err)
