@@ -2,6 +2,7 @@ package github
 
 import (
 	"context"
+	"sort"
 	"strings"
 
 	ghcli "github.com/google/go-github/github"
@@ -20,4 +21,17 @@ func (c *Client) RequestReview(ctx context.Context, repoWithOwner string, number
 		return errors.Wrap(err, "failed to request review on pull request")
 	}
 	return nil
+}
+func (c *Client) ListIssuesWithRequestedReview(ctx context.Context, repoWithOwner string, number int, revievers []string) ([]ghcli.Issue, error) {
+	ii, _, err := c.client.Search.Issues(ctx, "is:open+is:pr+review-requested:slomek", nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to request review on pull request")
+	}
+
+	sort.Slice(ii.Issues, func(i, j int) bool {
+		issI, issJ := ii.Issues[i], ii.Issues[j]
+		return issI.CreatedAt.Before(*(issJ).CreatedAt)
+	})
+
+	return ii.Issues, nil
 }
