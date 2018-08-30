@@ -25,6 +25,13 @@ Requesting a review on an existing pull request (PR number 123, request review f
 gh reviews request 123 user3 user4
 ```
 
+### Code reviews
+
+Listing all pull requests, where you have been selected as a reviewer:
+```
+gh reviews list
+```
+
 ### Listing users
 
 In order to request a review, you need a login of the particular user from the organization. To list users from "my-organization", use:
