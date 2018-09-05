@@ -36,16 +36,17 @@ var create = &cobra.Command{
 			return
 		}
 
-		message, err := git.CommitMessage()
-		if err != nil {
-			fmt.Printf("Failed to get commit message: %v\n", err)
-			return
-		}
-
 		branch, err := git.BranchName()
 		if err != nil {
 			fmt.Printf("Failed to get branch name: %v\n", err)
 			return
+		}
+
+		message, err := git.CommitMessage()
+		if err != nil {
+			fmt.Printf("Failed to get commit message: %v\n", err)
+			fmt.Printf("Using branch name ('%s') as PR title instead.\n", branch)
+			message = branch
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
